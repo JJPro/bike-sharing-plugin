@@ -1,0 +1,19 @@
+{
+    "name": "jasonj/shared-bikes-cross-factor",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Jason Ji",
+            "email": "lu.ji1@me.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "files": ["lib/constants.php"],
+        "psr-4": {
+            "": [
+                "lib/"
+            ]
+        }
+    }
+}

@@ -1,0 +1,13 @@
+vendor
+node_modules
+.DS_Store
+.elixir_ls
+.vscode
+.gitsecret/keys/random_seed
+config/ldap.php
+public
+log.txt
+.idea/
+dist
+!*.secret
+lib/api-keys.php
