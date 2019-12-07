@@ -34,7 +34,7 @@ class Activation
         station_id INT NOT NULL,
         region_id INT NOT NULL,
         name VARCHAR(255) NOT NULL,
-        capacity INT NOT NULL,
+        capacity INT DEFAULT NULL,
 
         PRIMARY KEY (station_id),
         FOREIGN KEY (region_id) REFERENCES region (region_id) ON DELETE NO ACTION

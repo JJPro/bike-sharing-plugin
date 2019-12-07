@@ -11,3 +11,4 @@ log.txt
 dist
 !*.secret
 lib/api-keys.php
+tmp

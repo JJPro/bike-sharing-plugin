@@ -4,13 +4,10 @@ include_once __DIR__ . '/../../vendor/autoload.php';
 use shared_bikes\CronScheduler;
 
 
-// init cron scheduler
-CronScheduler::scheduleEvents();
-
 // setup work
 register_activation_hook(BIKE_SHARING_PLUGIN_FILENAME, ['shared_bikes\Activation', 'init'] );
-add_action(BLUE_BIKES_PULLER_JOB_CRON_NAME, ['shared_bikes\BlueBikesDataPuller', 'pull']);
 
-
-// Test pull
-// shared_bikes\BlueBikesDataPuller::pull();
+// Cron Events
+add_filter('cron_schedules', ['shared_bikes\CronScheduler', 'registerIntervals']);
+add_action('init', ['shared_bikes\CronScheduler', 'scheduleEvents']);
+add_action(CronScheduler::blue_bikes_puller_cron, ['shared_bikes\BlueBikesDataPuller', 'pull']);

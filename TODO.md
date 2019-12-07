@@ -1,6 +1,5 @@
 GETTING DATA:
-- Skeleton
-- Cron to download new zipfile data at end of next month
+- ✅Cron to download new zipfile data at end of next month
 	- zip URL: https://s3.amazonaws.com/hubway-data/{year}{month-1}-bluebikes-tripdata.zip
 	- batch insert into db
 - Lazy loading of daily weather data and save a copy locally
@@ -19,3 +18,7 @@ GETTING DATA:
 		- visibility
 		- ozone
 - WP REST Endpoint for Frontend
+
+Deployment Notes:
+1. `SET GLOBAL local_infile = ON;` with root
+2. enable mysqli.allow_local_infile from php ini file
