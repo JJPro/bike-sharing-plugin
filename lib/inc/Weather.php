@@ -7,10 +7,11 @@ class Weather {
   const bostonCoord = ['long' => '-71.0589', 'lat' => '42.3601'];
 
   /**
-   * @param String $date format: YYYY-mm-dd
+   * @param String $date format: YYYYmmdd
    * @return Object weather information
    */
   public static function getWeatherFor($date) {
+    $date = date('Y-m-d', strtotime($date));
     /**
      * 1. search in local database
      * 2. pull from api if not found in local db
