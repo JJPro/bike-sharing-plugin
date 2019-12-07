@@ -88,7 +88,8 @@ class Activation
         visibility FLOAT NOT NULL,
         `date` DATE NOT NULL,
 
-        INDEX idx_weather_date (`date`)
+        INDEX idx_weather_date (`date`),
+        UNIQUE KEY (`date`)
       ) $charset_collate;
     weather_table;
 

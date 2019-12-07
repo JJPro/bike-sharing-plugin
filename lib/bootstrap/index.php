@@ -6,6 +6,7 @@ use shared_bikes\CronScheduler;
 
 // setup work
 register_activation_hook(BIKE_SHARING_PLUGIN_FILENAME, ['shared_bikes\Activation', 'init'] );
+add_action('rest_api_init', ['shared_bikes\RESTful', 'init']);
 
 // Cron Events
 add_filter('cron_schedules', ['shared_bikes\CronScheduler', 'registerIntervals']);
