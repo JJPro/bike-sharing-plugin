@@ -62,4 +62,22 @@ class Weather {
 
     return $record;
   }
+
+  /**
+   * Returns weather data for a given date interval (inclusive)
+   */
+  public static function getWeatherForRange($from, $to) {
+    $result = [];
+    $current = $from;
+    while($current !== $to) {
+      // fetch weather for current day
+      $result[$current] = Weather::getWeatherFor($current);
+
+      $current = date_create_from_format('Ymd', $current)->add(date_interval_create_from_date_string('1 day'))->format('Ymd');
+    }
+    // makeup for last day data
+    $result[$to] = Weather::getWeatherFor($to);
+
+    return $result;
+  }
 }
