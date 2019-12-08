@@ -44,6 +44,9 @@ class RESTful {
            * - gender -- 0|1|2: 0 for all, 1 for men, 2 for women
            * - age -- string 'All'|'<= 16'|'BETWEEN 16 AND 30'|'BETWEEN 30 AND 40'|'> 40'
            * - regions -- list of region ids
+           * - displayGenderIndividually
+           * - displayAgeIndividually
+           * - displayRegionsIndividually
            */
           $filter_gender = $data['gender'] ?? false;
           $filter_age = $data['age'] ?? false;
