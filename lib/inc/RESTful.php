@@ -58,36 +58,83 @@ class RESTful {
 
           $regions = ($filter_regions && $filter_regions[0] != 0) ? explode(',', $filter_regions) : $wpdb->get_col('SELECT region_id FROM region');
 
-          // $results = array_map(function($region_id) use ($wpdb, $filter_gender, $filter_age, $filter_regions, $from, $to){
-          //   $sql = "SELECT DATE(starttime) as `date`, COUNT(*) AS count
-          //     FROM trip
-          //     JOIN station ON start_station_id = station.station_id
-          //     WHERE starttime BETWEEN %s AND %s
-          //           AND station.region_id = $region_id
-          //           $filter_gender
-          //           $filter_age
-          //           $filter_regions
-          //     GROUP BY `date`";
-          //   $sql = $wpdb->prepare($sql, $from, $to);
-          //   $data = $wpdb->get_results($sql);
+          if (!$scatteredUserFilter) {
+            $sql = "SELECT DATE(starttime) as `date`, COUNT(*) AS count
+              FROM trip
+              JOIN station ON start_station_id = station.station_id
+              -- JOIN region USING(region_id)
+              WHERE starttime BETWEEN %s AND %s
+                    $filter_gender
+                    $filter_age
+                    $filter_regions
+              GROUP BY `date`";
+            $sql = $wpdb->prepare($sql, $from, $to);
+            $results = $wpdb->get_results($sql);
+          } else {
+            switch ($scatteredUserFilter) {
+              case 'Gender': // group by gender
+                $sql = "SELECT gender, DATE(starttime) as `date`, COUNT(*) AS count
+                  FROM trip
+                  JOIN station ON start_station_id = station.station_id
+                  -- JOIN region USING(region_id)
+                  WHERE starttime BETWEEN %s AND %s
+                        $filter_age
+                        $filter_regions
+                  GROUP BY gender, `date`";
+                $sql = $wpdb->prepare($sql, $from, $to);
+                break;
+              case 'Age': // group by custom
+                $ages = [
+                  [
+                    'label' => '<= 16',
+                    'query' => '<= 16'
+                  ],
+                  [
+                    'label' => '16-30',
+                    'query' => 'BETWEEN 16 AND 30'
+                  ],
+                  [
+                    'label' => '30-40',
+                    'query' => 'BETWEEN 30 AND 40'
+                  ],
+                  [
+                    'label' => '> 40',
+                    'query' => '> 40'
+                  ]
+                ];
+                $sql_parts = array_map(function($age) use ($wpdb, $from, $to) {
 
-          //   return [
-          //     'region_id' => $region_id,
-          //     'trips' => $data
-          //   ];
-          // }, (array)$regions);
+                  $current_sql = $wpdb->prepare("SELECT %s AS age, `date`, count
+                    FROM (
+                      SELECT (YEAR(NOW()) - birth_year) AS age, DATE(starttime) AS `date`, COUNT(*) AS count
+                      FROM trip
+                      WHERE starttime BETWEEN %s AND %s
+                      GROUP BY `date`
+                      HAVING age {$age['query']}
+                    ) AS t
+                  ", $age['label'], $from, $to);
+                  return $current_sql;
+                }, $ages);
+                $sql = implode(' UNION ', $sql_parts);
+                break;
+              case 'Regions': // group by region_id
+                $sql = "SELECT region_id AS regions, DATE(starttime) as `date`, COUNT(*) AS count
+                  FROM trip
+                  JOIN station ON start_station_id = station.station_id
+                  -- JOIN region USING(region_id)
+                  WHERE starttime BETWEEN %s AND %s
+                        $filter_gender
+                        $filter_age
+                        $filter_regions
+                  GROUP BY region_id, `date`";
+                $sql = $wpdb->prepare($sql, $from, $to);
+                break;
 
-          $sql = "SELECT DATE(starttime) as `date`, COUNT(*) AS count
-            FROM trip
-            JOIN station ON start_station_id = station.station_id
-            -- JOIN region USING(region_id)
-            WHERE starttime BETWEEN %s AND %s
-                  $filter_gender
-                  $filter_age
-                  $filter_regions
-            GROUP BY `date`";
-          $sql = $wpdb->prepare($sql, $from, $to);
-          $results = $wpdb->get_results($sql);
+              default:
+                break;
+            }
+            $results = $wpdb->get_results($sql);
+          }
 
           return rest_ensure_response($results);
         }
