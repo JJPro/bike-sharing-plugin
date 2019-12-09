@@ -42,7 +42,7 @@ class RESTful {
           /**
            * Params:
            * - gender -- 0|1|2: 0 for all, 1 for men, 2 for women
-           * - age -- string 'All'|'<= 16'|'BETWEEN 16 AND 30'|'BETWEEN 30 AND 40'|'> 40'
+           * - age -- string 'All'|'<= 20'|'BETWEEN 20 AND 30'|'BETWEEN 30 AND 40'|'> 50'
            * - regions -- list of region ids
            */
           $filter_gender = $data['gender'] ?? false;
@@ -53,10 +53,11 @@ class RESTful {
           $filter_gender = (int)$filter_gender ? " AND gender = $filter_gender " : '';
           $filter_age = ($filter_age && $filter_age !== 'All') ? " AND (YEAR(NOW()) - birth_year) $filter_age " : '';
           $filter_regions = ($filter_regions && $filter_regions[0] != 0) ? " AND region_id IN ($filter_regions) " : '';
+          $filter_valid_age_fixer = ' AND (YEAR(NOW()) - birth_year) < 120 ';
           // $query_join = $filter_regions ? " JOIN station ON start_station_id = station.station_id
           //   JOIN region USING(region_id) " : '';
 
-          $regions = ($filter_regions && $filter_regions[0] != 0) ? explode(',', $filter_regions) : $wpdb->get_col('SELECT region_id FROM region');
+          // $regions = ($filter_regions && $filter_regions[0] != 0) ? explode(',', $filter_regions) : $wpdb->get_col('SELECT region_id FROM region');
 
           if (!$scatteredUserFilter) {
             $sql = "SELECT DATE(starttime) as `date`, COUNT(*) AS count
@@ -64,6 +65,7 @@ class RESTful {
               JOIN station ON start_station_id = station.station_id
               -- JOIN region USING(region_id)
               WHERE starttime BETWEEN %s AND %s
+                    $filter_valid_age_fixer
                     $filter_gender
                     $filter_age
                     $filter_regions
@@ -78,6 +80,7 @@ class RESTful {
                   JOIN station ON start_station_id = station.station_id
                   -- JOIN region USING(region_id)
                   WHERE starttime BETWEEN %s AND %s
+                        $filter_valid_age_fixer
                         $filter_age
                         $filter_regions
                   GROUP BY gender, `date`";
@@ -86,29 +89,34 @@ class RESTful {
               case 'Age': // group by custom
                 $ages = [
                   [
-                    'label' => '<= 16',
-                    'query' => '<= 16'
+                    'label' => '<= 20',
+                    'query' => '<= 20'
                   ],
                   [
-                    'label' => '16-30',
-                    'query' => 'BETWEEN 16 AND 30'
+                    'label' => '20-30',
+                    'query' => 'BETWEEN 20 AND 30'
                   ],
                   [
                     'label' => '30-40',
                     'query' => 'BETWEEN 30 AND 40'
                   ],
                   [
-                    'label' => '> 40',
-                    'query' => '> 40'
+                    'label' => '40-50',
+                    'query' => 'BETWEEN 40 AND 50'
+                  ],
+                  [
+                    'label' => '> 50',
+                    'query' => '> 50'
                   ]
                 ];
-                $sql_parts = array_map(function($age) use ($wpdb, $from, $to) {
+                $sql_parts = array_map(function($age) use ($wpdb, $from, $to, $filter_valid_age_fixer) {
 
                   $current_sql = $wpdb->prepare("SELECT %s AS age, `date`, count
                     FROM (
                       SELECT (YEAR(NOW()) - birth_year) AS age, DATE(starttime) AS `date`, COUNT(*) AS count
                       FROM trip
                       WHERE starttime BETWEEN %s AND %s
+                            $filter_valid_age_fixer
                       GROUP BY `date`
                       HAVING age {$age['query']}
                     ) AS t
@@ -123,6 +131,7 @@ class RESTful {
                   JOIN station ON start_station_id = station.station_id
                   -- JOIN region USING(region_id)
                   WHERE starttime BETWEEN %s AND %s
+                        $filter_valid_age_fixer
                         $filter_gender
                         $filter_age
                         $filter_regions
