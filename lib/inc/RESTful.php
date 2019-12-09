@@ -60,7 +60,7 @@ class RESTful {
           // $regions = ($filter_regions && $filter_regions[0] != 0) ? explode(',', $filter_regions) : $wpdb->get_col('SELECT region_id FROM region');
 
           if (!$scatteredUserFilter) {
-            $sql = "SELECT DATE(starttime) as `date`, COUNT(*) AS count
+            $sql = "SELECT DATE(starttime) as `date`, COUNT(id) AS count
               FROM trip
               JOIN station ON start_station_id = station.station_id
               -- JOIN region USING(region_id)
@@ -75,7 +75,7 @@ class RESTful {
           } else {
             switch ($scatteredUserFilter) {
               case 'Gender': // group by gender
-                $sql = "SELECT gender, DATE(starttime) as `date`, COUNT(*) AS count
+                $sql = "SELECT gender, DATE(starttime) as `date`, COUNT(id) AS count
                   FROM trip
                   JOIN station ON start_station_id = station.station_id
                   -- JOIN region USING(region_id)
@@ -113,7 +113,7 @@ class RESTful {
 
                   $current_sql = $wpdb->prepare("SELECT %s AS age, `date`, count
                     FROM (
-                      SELECT (YEAR(NOW()) - birth_year) AS age, DATE(starttime) AS `date`, COUNT(*) AS count
+                      SELECT (YEAR(NOW()) - birth_year) AS age, DATE(starttime) AS `date`, COUNT(id) AS count
                       FROM trip
                       WHERE starttime BETWEEN %s AND %s
                             $filter_valid_age_fixer
@@ -126,7 +126,7 @@ class RESTful {
                 $sql = implode(' UNION ', $sql_parts);
                 break;
               case 'Regions': // group by region_id
-                $sql = "SELECT region_id AS regions, DATE(starttime) as `date`, COUNT(*) AS count
+                $sql = "SELECT region_id AS regions, DATE(starttime) as `date`, COUNT(id) AS count
                   FROM trip
                   JOIN station ON start_station_id = station.station_id
                   -- JOIN region USING(region_id)

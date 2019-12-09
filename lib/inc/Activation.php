@@ -53,6 +53,9 @@ class Activation
         gender INT(2) DEFAULT 0,
 
         PRIMARY KEY (id),
+        KEY idx_trip_starttime (starttime),
+        KEY idx_trip_start_station_id (start_station_id),
+        KEY idx_trip_gender (gender),
         FOREIGN KEY (start_station_id) REFERENCES station (station_id) ON DELETE NO ACTION ,
         FOREIGN KEY (end_station_id) REFERENCES station (station_id) ON DELETE NO ACTION
       ) $charset_collate;
