@@ -53,7 +53,7 @@ class RESTful {
           $filter_gender = (int)$filter_gender ? " AND gender = $filter_gender " : '';
           $filter_age = ($filter_age && $filter_age !== 'All') ? " AND (YEAR(NOW()) - birth_year) $filter_age " : '';
           $filter_regions = ($filter_regions && $filter_regions[0] != 0) ? " AND region_id IN ($filter_regions) " : '';
-          $filter_valid_age_fixer = ' AND (YEAR(NOW()) - birth_year) < 120 ';
+          $filter_valid_age_fixer = ' AND (YEAR(NOW()) - birth_year) < 100 ';
           // $query_join = $filter_regions ? " JOIN station ON start_station_id = station.station_id
           //   JOIN region USING(region_id) " : '';
 
@@ -65,7 +65,6 @@ class RESTful {
               JOIN station ON start_station_id = station.station_id
               -- JOIN region USING(region_id)
               WHERE starttime BETWEEN %s AND %s
-                    $filter_valid_age_fixer
                     $filter_gender
                     $filter_age
                     $filter_regions
@@ -80,7 +79,6 @@ class RESTful {
                   JOIN station ON start_station_id = station.station_id
                   -- JOIN region USING(region_id)
                   WHERE starttime BETWEEN %s AND %s
-                        $filter_valid_age_fixer
                         $filter_age
                         $filter_regions
                   GROUP BY gender, `date`";
@@ -129,9 +127,7 @@ class RESTful {
                 $sql = "SELECT region_id AS regions, DATE(starttime) as `date`, COUNT(id) AS count
                   FROM trip
                   JOIN station ON start_station_id = station.station_id
-                  -- JOIN region USING(region_id)
                   WHERE starttime BETWEEN %s AND %s
-                        $filter_valid_age_fixer
                         $filter_gender
                         $filter_age
                         $filter_regions
