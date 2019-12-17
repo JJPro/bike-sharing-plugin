@@ -76,7 +76,7 @@ class Activation
      */
     $create_weather_table = <<<weather_table
       CREATE TABLE IF NOT EXISTS weather (
-        precipProbability FLOAT NOT NULL,
+        precipProbability FLOAT DEFAULT NULL,
         precipType VARCHAR(255) DEFAULT NULL,
         precipIntensity FLOAT DEFAULT NULL,
         precipAccumulation FLOAT DEFAULT NULL,
@@ -85,7 +85,7 @@ class Activation
         pressure FLOAT NOT NULL,
         cloudCover FLOAT NOT NULL,
         humidity FLOAT NOT NULL,
-        ozone FLOAT NOT NULL,
+        ozone FLOAT DEFAULT NULL,
         uvIndex INT NOT NULL,
         windSpeed FLOAT NOT NULL,
         visibility FLOAT NOT NULL,

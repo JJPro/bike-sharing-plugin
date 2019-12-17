@@ -1,5 +1,6 @@
 {
     "name": "jasonj/shared-bikes-cross-factor",
+    "description": "DB project",
     "type": "project",
     "authors": [
         {

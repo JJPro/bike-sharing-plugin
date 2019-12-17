@@ -83,7 +83,7 @@ class BlueBikesDataPuller {
   private static function getNewTripData() {
     $str_lastmonth = date('Ym', strtotime("-1 month"));
 
-    $last_success_pull_yearmonth = get_option( self::option__last_successful_pull_yearmonth, '201812' );
+    $last_success_pull_yearmonth = get_option( self::option__last_successful_pull_yearmonth, '201804' );
 
     $yearmonth = date_create_from_format('Ym', $last_success_pull_yearmonth)->add(date_interval_create_from_date_string('1 month'))->format('Ym');
     while ($yearmonth !== $str_lastmonth) {
