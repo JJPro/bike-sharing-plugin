@@ -9,20 +9,20 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
-      
+
     - name: Install dependencies
       run: composer install
-      
+
     - name: Build
       run: composer dump-autoload -o
 
     - name: Deploy to Production Server
       uses: appleboy/scp-action@master
-      env: 
+      env:
         HOST: ${{ secrets.HOST }}
         USERNAME: ${{ secrets.USERNAME }}
         KEY: ${{ secrets.privateKey }}
       with:
-        source: "./*.php,lib,vendor" 
-        target: "/var/www/html/wordpress/wp-content/plugins/bike-sharing-plugin/"
+        source: "./*.php,lib,vendor"
+        target: "/var/www/wordpress/wp-content/plugins/bike-sharing-plugin/"
         overwrite: true
