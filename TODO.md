@@ -20,5 +20,6 @@ GETTING DATA:
 - ✅WP REST Endpoint for Frontend
 
 Deployment Notes:
-1. `SET GLOBAL local_infile = ON;` with root
+1. `SET GLOBAL local_infile = ON;` with root in DB
 2. enable mysqli.allow_local_infile from php ini file
+3. set env `DARK_SKY_API_KEY` to your API Key
