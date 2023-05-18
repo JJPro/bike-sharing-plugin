@@ -14,9 +14,7 @@
     "autoload": {
         "files": ["lib/constants.php"],
         "psr-4": {
-            "": [
-                "lib/"
-            ]
+            "shared_bikes\\": "lib/inc/"
         }
     }
 }
